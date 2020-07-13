@@ -2,11 +2,17 @@ from flask import Flask, request, jsonify, make_response
 import pickledb
 import json
 import random
+import i18n
 
 # If `entrypoint` is not defined in app.yaml, App Engine will look for an app
 # called `app` in `main.py`.
 app = Flask(__name__)
 db = pickledb.load('simple.db', False)
+
+# import i18n for translate document
+i18n.load_path.append('locales')
+i18n.set('file_format', 'json')
+i18n.set('fallback', 'en')
 
 @app.route('/')
 def hello():
@@ -26,6 +32,9 @@ def webhook():
 
 def dispatchHandler(data):
     session = data.get("session")
+    language_code = data.get("queryResult").get("languageCode")
+    print(language_code)
+    i18n.set('locale', language_code)
 
     action_name = data.get("queryResult").get("intent").get("displayName")
     if action_name == "Default Welcome Intent":
@@ -33,7 +42,7 @@ def dispatchHandler(data):
         high = 5
         target = random.randint(low+1, high-1)
         db.set(session, (low, target, high))
-        text = "I have a number between {} and {}. Can you guess it?".format(low, high)
+        text = i18n.t('guess.welcome', low = str(low), high = str(high))
         print("Response:{}".format(text))
         reply = { "fulfillmentText": text }
         return jsonify(reply)
@@ -43,7 +52,7 @@ def dispatchHandler(data):
         guessnum = int(data.get("queryResult").get("parameters").get("number"))
         minnum, target, maxnum = pair
         if guessnum > maxnum or guessnum < minnum:
-            text = "Are you sure? I said a number between {} and {}".format(minnum, maxnum)
+            text = i18n.t('guess.guess_out', low = str(minnum), high = str(maxnum))
         else:
             if guessnum == target:
                 event = "User_number_match"
@@ -54,7 +63,7 @@ def dispatchHandler(data):
                     minnum = guessnum
                 else:
                     maxnum = guessnum
-                text = "A number between {} and {}. Keep guess.".format(minnum, maxnum)
+                text = i18n.t('guess.guess_unmatch', low = str(minnum), high = str(maxnum))
                 db.set(session, (minnum, target, maxnum))
 
         print("Response:{}".format(text))

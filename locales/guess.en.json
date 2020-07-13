@@ -1,0 +1,8 @@
+{
+  "en": {
+    "test" : "test",
+    "welcome" : "I have a number between %{low} and %{high}. Can you guess it?",
+    "guess_out": "Are you sure? I said a number between %{low} and %{high}",
+    "guess_unmatch" : "A number between %{low} and %{high}. Keep guess."
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "zh-tw": {
+    "test" : "測試字串",
+    "welcome" : "我有一個介於 %{low} 到 %{high} 的數字，你能猜到嗎？",
+    "guess_out": "你確定嗎？我說介於 %{low} 跟 %{high} 之間",
+    "guess_unmatch" : "介於 %{low} 跟 %{high} 之間，再接再勵"
+  }
+}
+
